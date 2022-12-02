@@ -15,17 +15,23 @@ fn main() -> Result<()> {
     Ok(())
 }
 
+/// Get all the elves and their calorie counts
 fn get_elves(input: &Input) -> Result<Vec<u32>> {
     Ok(input
         .as_lines()
         .batching(|it| {
+            // Consume the lines in batches, making a new batch on each empty line
+            // Take lines until we encounter an empty line and convert to u32
             match it
                 .take_while(|calories| !calories.is_empty())
                 .map(u32::from_str)
                 .try_collect::<_, Vec<_>, _>()
             {
+                // Match an empty vector, indicating the end of the input
                 Ok(empty) if empty.is_empty() => None,
+                // Sum all calorie values into a total and yield that
                 Ok(elf) => Some(Ok(elf.into_iter().sum())),
+               // Forward errors
                 Err(error) => Some(Err(error)),
             }
         })

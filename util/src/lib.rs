@@ -5,6 +5,7 @@ use std::str::Split;
 
 pub struct Input(String);
 
+/// Abstraction around the puzzle input, can provide the input as an iterator over lines or as a str
 impl Input {
     pub fn from_lines<I, S>(lines: I) -> Input
     where
@@ -29,10 +30,13 @@ impl Input {
         File::open(path)?.read_to_string(&mut input)?;
         Ok(Input(input))
     }
+
+    /// Get the input as a string
     pub fn as_str(&self) -> &str {
         &self.0
     }
 
+    /// Get the input as an interator of lines
     pub fn as_lines(&self) -> Split<char> {
         self.0.split('\n')
     }
