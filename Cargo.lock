@@ -14,6 +14,17 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "itertools",
+ "util",
+]
+
+[[package]]
+name = "day02"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "itertools",
+ "once_cell",
+ "util",
 ]
 
 [[package]]
@@ -30,6 +41,12 @@ checksum = "b0fd2260e829bddf4cb6ea802289de2f86d6a7a690192fbe91b3f46e0f2c8473"
 dependencies = [
  "either",
 ]
+
+[[package]]
+name = "once_cell"
+version = "1.16.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "86f0b0d4bf799edbc74508c1e8bf170ff5f41238e5f8225603ca7caaae2b7860"
 
 [[package]]
 name = "util"

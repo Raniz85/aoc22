@@ -41,7 +41,6 @@ impl Input {
 #[cfg(test)]
 mod tests {
     use super::Input;
-    
 
     #[test]
     fn test_as_str() {
