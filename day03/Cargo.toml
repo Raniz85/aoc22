@@ -1,0 +1,9 @@
+[package]
+edition = "2021"
+name = "day03"
+version = "0.1.0"
+
+[dependencies]
+util = { path = "../util" }
+anyhow = "1.0.66"
+itertools = "0.10.5"
