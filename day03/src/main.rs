@@ -1,6 +1,6 @@
-use std::collections::HashSet;
 use anyhow::{anyhow, bail, Result};
 use itertools::Itertools;
+use std::collections::HashSet;
 
 use util::Input;
 
@@ -33,37 +33,45 @@ impl Gear {
 }
 
 fn part1(input: &Input) -> u32 {
-    input.as_lines()
+    input
+        .as_lines()
         .filter(|line| !line.is_empty())
         .flat_map(|line| {
             // Split the line in the middle to get the two compartments and convert them into hashsets of gear
             let (first, second) = line.split_at(line.len() / 2);
-            let first: HashSet<Gear> = first.chars().map(|c| Gear(c)).collect();
-            let second: HashSet<Gear> = second.chars().map(|c| Gear(c)).collect();
+            let first: HashSet<Gear> = first.chars().map(Gear).collect();
+            let second: HashSet<Gear> = second.chars().map(Gear).collect();
             // Find the duplicates by using set intersection
             let duplicates = first.intersection(&second);
             // convert into priority
-            duplicates.into_iter()
-                .map(Gear::priority)
-                .collect_vec()
+            duplicates.into_iter().map(Gear::priority).collect_vec()
         })
         .sum()
 }
 
 fn part2(input: &Input) -> Result<u32> {
-    Ok(input.as_lines()
+    Ok(input
+        .as_lines()
         .filter(|line| !line.is_empty())
         .collect_vec()
         .as_slice()
         .chunks(3)
         .map(|group| {
             // Iterate over sets of 3 elves and convert their backpacks into hashsets of gear
-            let elves: [HashSet<Gear>; 3] = group.into_iter().map(|elf| elf.chars().map(|c| Gear(c)).collect::<HashSet<Gear>>())
+            let elves: [HashSet<Gear>; 3] = group
+                .iter()
+                .map(|elf| elf.chars().map(Gear).collect::<HashSet<Gear>>())
                 .collect_vec()
                 .try_into()
                 .map_err(|_| anyhow!("Number of elves not divisible by 3"))?;
             // Find the element in all three backpacks using set intersection
-            let badge = elves[0].intersection(&elves[1]).cloned().collect::<HashSet<Gear>>().intersection(&elves[2]).cloned().collect_vec();
+            let badge = elves[0]
+                .intersection(&elves[1])
+                .cloned()
+                .collect::<HashSet<Gear>>()
+                .intersection(&elves[2])
+                .cloned()
+                .collect_vec();
             if badge.len() != 1 {
                 bail!("Invalid group with {} shared items", badge.len())
             } else {
@@ -85,12 +93,12 @@ mod test {
     #[test]
     pub fn test_part1() -> Result<()> {
         let input = Input::from_lines([
-                                          "vJrwpWtwJgWrhcsFMMfFFhFp",
-                                      "jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL",
-                                      "PmmdzqPrVvPwwTWBwg",
-                                      "wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn",
-                                      "ttgJtRGJQctTZtZT",
-                                      "CrZsJsPPZsGzwwsLwLmpwMDw",
+            "vJrwpWtwJgWrhcsFMMfFFhFp",
+            "jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL",
+            "PmmdzqPrVvPwwTWBwg",
+            "wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn",
+            "ttgJtRGJQctTZtZT",
+            "CrZsJsPPZsGzwwsLwLmpwMDw",
         ]);
         assert_eq!(part1(&input), 157);
         Ok(())

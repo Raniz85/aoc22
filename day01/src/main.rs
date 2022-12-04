@@ -31,7 +31,7 @@ fn get_elves(input: &Input) -> Result<Vec<u32>> {
                 Ok(empty) if empty.is_empty() => None,
                 // Sum all calorie values into a total and yield that
                 Ok(elf) => Some(Ok(elf.into_iter().sum())),
-               // Forward errors
+                // Forward errors
                 Err(error) => Some(Err(error)),
             }
         })
