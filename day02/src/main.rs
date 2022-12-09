@@ -64,14 +64,11 @@ fn main() -> Result<()> {
 fn calculate_score(input: &Input, score_table: &HashMap<&str, u32>) -> Result<u32> {
     // Iterate over all lines, fetching the score from the score table and the summing it up
     process_results(
-        input
-            .as_lines()
-            .filter(|line| !line.is_empty())
-            .map(|line| {
-                score_table
-                    .get(line)
-                    .ok_or_else(|| anyhow!("Invalid state {}", line))
-            }),
+        input.trim_trailing_newlines().as_lines().map(|line| {
+            score_table
+                .get(line)
+                .ok_or_else(|| anyhow!("Invalid state {}", line))
+        }),
         |scores| scores.sum(),
     )
 }

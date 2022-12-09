@@ -3,6 +3,7 @@ use std::io::Read;
 use std::path::Path;
 use std::str::Split;
 
+#[derive(Clone)]
 pub struct Input(String);
 
 /// Abstraction around the puzzle input, can provide the input as an iterator over lines or as a str
@@ -21,6 +22,11 @@ impl Input {
                 .trim_end()
                 .to_string(),
         )
+    }
+
+    /// Return self without any extra empty newline at the end
+    pub fn trim_trailing_newlines(&self) -> Input {
+        Input(self.0.trim_end_matches('\n').to_string())
     }
 }
 
@@ -74,5 +80,17 @@ mod tests {
 
         // then as_str returns the lines concatenated
         assert_eq!("a line\nanother line", input.as_str());
+    }
+
+    #[test]
+    fn test_trim_trailing_newlines() {
+        // given some input with trailing newlines
+        let input = Input("a line\nanother line\n\n".to_string());
+
+        // expect input as lines with trailing newlines removed to only include the non-empty strings
+        itertools::assert_equal(
+            input.trim_trailing_newlines().as_lines(),
+            vec!["a line", "another line"],
+        );
     }
 }

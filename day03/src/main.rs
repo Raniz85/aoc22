@@ -34,8 +34,8 @@ impl Gear {
 
 fn part1(input: &Input) -> u32 {
     input
+        .trim_trailing_newlines()
         .as_lines()
-        .filter(|line| !line.is_empty())
         .flat_map(|line| {
             // Split the line in the middle to get the two compartments and convert them into hashsets of gear
             let (first, second) = line.split_at(line.len() / 2);
@@ -51,8 +51,8 @@ fn part1(input: &Input) -> u32 {
 
 fn part2(input: &Input) -> Result<u32> {
     Ok(input
+        .trim_trailing_newlines()
         .as_lines()
-        .filter(|line| !line.is_empty())
         .collect_vec()
         .as_slice()
         .chunks(3)

@@ -15,23 +15,27 @@ fn main() -> Result<()> {
 }
 
 fn build_forest(input: &Input) -> Result<(Vec<u32>, usize, usize)> {
-    if input.as_lines()
-        .filter(|line| !line.is_empty())
+    if input
+        .trim_trailing_newlines()
+        .as_lines()
         .map(str::len)
         .unique()
-        .count() != 1 {
+        .count()
+        != 1
+    {
         bail!("All rows are not of the same length");
     }
-    let forest = input.as_lines()
-        .filter(|line| !line.is_empty())
+    let forest = input
+        .trim_trailing_newlines()
+        .as_lines()
         .flat_map(|line| line.chars().map(|c| c as u32 - '0' as u32))
         .collect_vec();
-    let num_rows = input.as_lines().filter(|line| !line.is_empty()).count();
+    let num_rows = input.trim_trailing_newlines().as_lines().count();
     let num_cols = forest.len() / num_rows;
     Ok((forest, num_rows, num_cols))
 }
 
-fn count_trees(forest: &[u32], iterator: impl Iterator<Item=usize>) -> Vec<usize> {
+fn count_trees(forest: &[u32], iterator: impl Iterator<Item = usize>) -> Vec<usize> {
     iterator
         .fold((-1, Vec::new()), |state, index| {
             let (max_tree, mut trees) = state;
@@ -43,30 +47,36 @@ fn count_trees(forest: &[u32], iterator: impl Iterator<Item=usize>) -> Vec<usize
                 max_tree
             };
             (max_tree, trees)
-        }).1
+        })
+        .1
 }
 
 fn part1(input: &Input) -> Result<u32> {
     let (forest, num_rows, num_cols) = build_forest(input)?;
-    let rows_iterator = (0..num_rows)
-        .flat_map(|row| -> [Box<dyn Iterator<Item=usize>>;2] {
-            let row_start = row * num_cols;
-            let row_end = (row + 1) * num_cols;
-            [Box::new(row_start..row_end), Box::new((row_start..row_end).rev())]
-        });
-    let cols_iterator = (0..num_cols)
-        .flat_map(|col| -> [Box<dyn Iterator<Item=usize>>;2] {
-            let col_start = col;
-            let col_end = num_rows * num_cols + col;
-            [Box::new((col_start..col_end).step_by(num_cols)), Box::new((col_start..col_end).step_by(num_cols).rev())]
-        });
-    Ok(rows_iterator.chain(cols_iterator)
+    let rows_iterator = (0..num_rows).flat_map(|row| -> [Box<dyn Iterator<Item = usize>>; 2] {
+        let row_start = row * num_cols;
+        let row_end = (row + 1) * num_cols;
+        [
+            Box::new(row_start..row_end),
+            Box::new((row_start..row_end).rev()),
+        ]
+    });
+    let cols_iterator = (0..num_cols).flat_map(|col| -> [Box<dyn Iterator<Item = usize>>; 2] {
+        let col_start = col;
+        let col_end = num_rows * num_cols + col;
+        [
+            Box::new((col_start..col_end).step_by(num_cols)),
+            Box::new((col_start..col_end).step_by(num_cols).rev()),
+        ]
+    });
+    Ok(rows_iterator
+        .chain(cols_iterator)
         .flat_map(|tree_iterator| count_trees(&forest, tree_iterator))
         .unique()
         .count() as u32)
 }
 
-fn visible_trees(forest: &[u32], mut it: impl Iterator<Item=usize>) -> usize {
+fn visible_trees(forest: &[u32], mut it: impl Iterator<Item = usize>) -> usize {
     if let Some(tree_index) = it.next() {
         let tree = forest[tree_index];
         let mut seen = 0;
@@ -89,7 +99,12 @@ fn part2(input: &Input) -> Result<u32> {
             let row = tree_index / num_cols;
             let left_trees = visible_trees(&forest, ((row * num_cols)..=tree_index).rev());
             let right_trees = visible_trees(&forest, tree_index..((row + 1) * num_cols));
-            let up_trees = visible_trees(&forest, ((tree_index % num_cols)..=tree_index).rev().step_by(num_cols));
+            let up_trees = visible_trees(
+                &forest,
+                ((tree_index % num_cols)..=tree_index)
+                    .rev()
+                    .step_by(num_cols),
+            );
             let down_trees = visible_trees(&forest, (tree_index..forest.len()).step_by(num_cols));
             left_trees * right_trees * up_trees * down_trees
         })
@@ -105,26 +120,14 @@ mod test {
 
     #[test]
     pub fn test_part1() -> Result<()> {
-        let input = Input::from_lines([
-                                          "30373",
-                                      "25512",
-                                      "65332",
-                                      "33549",
-                                      "35390",
-        ]);
+        let input = Input::from_lines(["30373", "25512", "65332", "33549", "35390"]);
         assert_eq!(part1(&input).unwrap(), 21);
         Ok(())
     }
 
     #[test]
     pub fn test_part2() -> Result<()> {
-        let input = Input::from_lines([
-            "30373",
-            "25512",
-            "65332",
-            "33549",
-            "35390",
-        ]);
+        let input = Input::from_lines(["30373", "25512", "65332", "33549", "35390"]);
         assert_eq!(part2(&input).unwrap(), 8);
         Ok(())
     }

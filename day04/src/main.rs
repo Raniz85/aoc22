@@ -62,8 +62,8 @@ impl Sections {
 
 fn count_overlaps(input: &Input, overlapping_predicate: impl Fn(&Pair) -> bool) -> Result<u32> {
     input
+        .trim_trailing_newlines()
         .as_lines()
-        .filter(|line| !line.is_empty())
         .try_fold(0u32, |total, line| {
             Pair::new(line)
                 .map(|pair| overlapping_predicate(&pair))
