@@ -1,0 +1,24 @@
+name: PR Checks
+on: [pull_request]
+jobs:
+  # Run Clippy for linting
+  Clippy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: cargo clippy
+
+  # Check formatting
+  "Format Check":
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: cargo fmt --check
+
+  # Run all the tests
+  Test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: cargo test
+
